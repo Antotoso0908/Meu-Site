@@ -114,7 +114,15 @@ button { cursor: pointer; border: none; font-weight: 600; transition: 0.2s; }
 .msg-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
 
 /* Dock de Input */
-.input-dock { padding: 14px 24px 20px; background: var(--bg-main); border-top: 1px solid var(--border); }
+/* Dock de Input (Otimizado para celulares e barra de navegação) */
+.input-dock { 
+    padding: 14px 24px calc(20px + env(safe-area-inset-bottom)); 
+    background: var(--bg-main); 
+    border-top: 1px solid var(--border); 
+    position: relative;
+    z-index: 10;
+}
+
 .recipient-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.78rem; color: var(--text-2); flex-wrap: wrap; }
 .pills-group { display: flex; gap: 6px; flex-wrap: wrap; }
 .pill-btn { padding: 4px 11px; border-radius: 16px; font-size: 0.76rem; background: rgba(255,255,255,0.05); color: var(--text-2); border: 1px solid var(--border); }
