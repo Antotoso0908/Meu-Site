@@ -27,9 +27,7 @@ body { background: var(--bg-main); color: var(--text-1); height: 100vh; overflow
 .hidden { display: none !important; }
 .modal-glass { background: #101522; border: 1px solid var(--border); border-radius: 18px; padding: 26px; width: 100%; max-width: 450px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 45px rgba(0,0,0,0.6); }
 .wide-box { max-width: 560px; }
-.lock-box { max-width: 360px; text-align: center; }
 
-.shield-badge { width: 54px; height: 54px; margin: 0 auto; border-radius: 14px; background: var(--gradient); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; }
 .modal-top { display: flex; justify-content: space-between; align-items: center; }
 .modal-top h2 { font-size: 1.15rem; display: flex; align-items: center; gap: 8px; }
 
