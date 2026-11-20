@@ -3,121 +3,194 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Council - Meu Hub Privado</title>
+    <title>OmniCouncil — Hub de IAs</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- TELA DE BLOQUEIO (Para manter o site público privado só para você) -->
+    <div class="ambient-light light-purple"></div>
+    <div class="ambient-light light-blue"></div>
+
+    <!-- TELA DE BLOQUEIO -->
     <div id="lock-screen" class="overlay">
-        <div class="modal-box">
-            <h2>🔒 Acesso Restrito</h2>
-            <p id="lock-msg">Digite sua senha de acesso:</p>
-            <input type="password" id="master-password" placeholder="Sua senha...">
-            <button id="unlock-btn" class="btn-primary">Entrar</button>
+        <div class="modal-glass lock-box">
+            <div class="shield-badge"><i class="fa-solid fa-fingerprint"></i></div>
+            <h2>OmniCouncil</h2>
+            <p id="lock-subtitle">Crie sua nova senha mestre:</p>
+            <input type="password" id="master-pass" placeholder="••••••••">
+            <button id="unlock-btn" class="btn-primary full-width">Salvar Senha & Entrar</button>
         </div>
     </div>
 
-    <!-- MODAL DE CONFIGURAÇÃO DE CHAVES DE API -->
-    <div id="api-modal" class="overlay hidden">
-        <div class="modal-box">
-            <h2>🔑 Configurar Chaves de API</h2>
-            <p class="small-text">Suas chaves ficam salvas apenas no navegador deste dispositivo.</p>
-            
-            <label>OpenAI (ChatGPT)</label>
-            <input type="password" id="key-openai" placeholder="sk-...">
-            
-            <label>Anthropic (Claude)</label>
-            <input type="password" id="key-anthropic" placeholder="sk-ant-...">
-            
-            <label>xAI (Grok)</label>
-            <input type="password" id="key-grok" placeholder="xai-...">
-            
-            <label>DeepSeek</label>
-            <input type="password" id="key-deepseek" placeholder="sk-...">
-            
-            <label>Groq (Para rodar Meta Llama 3 grátis/rápido)</label>
-            <input type="password" id="key-meta" placeholder="gsk_...">
-
-            <div class="modal-actions">
-                <button id="save-keys-btn" class="btn-primary">Salvar Chaves</button>
-                <button id="close-api-btn" class="btn-secondary">Fechar</button>
+    <!-- MODAL DE CONFIGURAÇÕES -->
+    <div id="config-modal" class="overlay hidden">
+        <div class="modal-glass wide-box">
+            <div class="modal-top">
+                <h2><i class="fa-solid fa-sliders"></i> Configurações Globais</h2>
+                <button id="close-config-btn" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
             </div>
+
+            <div class="config-block">
+                <h3><i class="fa-solid fa-key"></i> Chave Única OpenRouter (Para todas as 5 IAs)</h3>
+                <p class="desc">Conecta Claude, Grok, Gemini, ChatGPT e Meta AI de uma vez só.</p>
+                <div class="field">
+                    <label>OpenRouter API Key</label>
+                    <input type="password" id="openrouter-key" placeholder="sk-or-v1-...">
+                </div>
+                <div class="field">
+                    <label>Nível dos Modelos</label>
+                    <select id="model-tier">
+                        <option value="free">Modo Gratuito (Modelos :free / Sem gastar créditos)</option>
+                        <option value="pro">Modo Principal (GPT-4o, Claude Sonnet, Gemini Pro, Grok)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="config-block">
+                <h3><i class="fa-solid fa-database"></i> Banco de Dados Supabase</h3>
+                <p class="desc">Mantém suas salas sincronizadas.</p>
+                <div class="row-2">
+                    <div class="field">
+                        <label>Supabase Project URL</label>
+                        <input type="text" id="supa-url" placeholder="https://seu-id.supabase.co">
+                    </div>
+                    <div class="field">
+                        <label>Supabase Anon Key</label>
+                        <input type="password" id="supa-key" placeholder="sb_publishable_...">
+                    </div>
+                </div>
+            </div>
+
+            <button id="save-config-btn" class="btn-primary full-width">
+                <i class="fa-solid fa-floppy-disk"></i> Salvar & Sincronizar
+            </button>
         </div>
     </div>
 
-    <!-- MODAL DE NOVA CONVERSA -->
-    <div id="new-chat-modal" class="overlay hidden">
-        <div class="modal-box">
-            <h2>💬 Nova Conversa em Grupo</h2>
-            <label>Nome da Sala / Assunto:</label>
-            <input type="text" id="chat-title-input" placeholder="Ex: Debate sobre Programação...">
-            
-            <p>Selecione quais IAs vão participar desta sala:</p>
-            <div class="checkbox-group">
-                <label><input type="checkbox" value="ChatGPT" checked> ChatGPT (OpenAI)</label>
-                <label><input type="checkbox" value="Claude" checked> Claude (Anthropic)</label>
-                <label><input type="checkbox" value="Grok"> Grok (xAI)</label>
-                <label><input type="checkbox" value="DeepSeek"> DeepSeek</label>
-                <label><input type="checkbox" value="MetaAI"> Meta AI (Llama 3)</label>
+    <!-- MODAL NOVA SALA -->
+    <div id="room-modal" class="overlay hidden">
+        <div class="modal-glass">
+            <div class="modal-top">
+                <h2><i class="fa-solid fa-plus-circle"></i> Nova Conversa</h2>
+                <button id="close-room-btn" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="modal-actions">
-                <button id="create-chat-confirm" class="btn-primary">Criar Sala</button>
-                <button id="close-new-chat-btn" class="btn-secondary">Cancelar</button>
+            <div class="field">
+                <label>Assunto da Sala</label>
+                <input type="text" id="room-name" placeholder="Ex: Planejamento de Projeto...">
             </div>
+
+            <label class="group-title">Selecione as IAs participantes:</label>
+            <div class="ai-grid">
+                <label class="ai-option">
+                    <input type="checkbox" value="ChatGPT" checked>
+                    <div class="ai-card">
+                        <span class="avatar color-ChatGPT"><i class="fa-solid fa-bolt"></i></span>
+                        <div><strong>ChatGPT</strong><small>OpenAI</small></div>
+                    </div>
+                </label>
+
+                <label class="ai-option">
+                    <input type="checkbox" value="Claude" checked>
+                    <div class="ai-card">
+                        <span class="avatar color-Claude"><i class="fa-solid fa-feather"></i></span>
+                        <div><strong>Claude</strong><small>Anthropic</small></div>
+                    </div>
+                </label>
+
+                <label class="ai-option">
+                    <input type="checkbox" value="Gemini" checked>
+                    <div class="ai-card">
+                        <span class="avatar color-Gemini"><i class="fa-solid fa-sparkles"></i></span>
+                        <div><strong>Gemini</strong><small>Google</small></div>
+                    </div>
+                </label>
+
+                <label class="ai-option">
+                    <input type="checkbox" value="Grok">
+                    <div class="ai-card">
+                        <span class="avatar color-Grok"><i class="fa-solid fa-x"></i></span>
+                        <div><strong>Grok</strong><small>xAI</small></div>
+                    </div>
+                </label>
+
+                <label class="ai-option">
+                    <input type="checkbox" value="MetaAI">
+                    <div class="ai-card">
+                        <span class="avatar color-MetaAI"><i class="fa-solid fa-infinity"></i></span>
+                        <div><strong>Meta AI</strong><small>Llama</small></div>
+                    </div>
+                </label>
+            </div>
+
+            <button id="create-room-btn" class="btn-primary full-width">Criar Sala</button>
         </div>
     </div>
 
-    <!-- INTERFACE PRINCIPAL -->
-    <div class="app-container">
-        <!-- BARRA LATERAL -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h3>🤖 AI Council</h3>
-                <button id="open-new-chat-btn" class="btn-primary full-width">+ Nova Conversa</button>
-            </div>
-            
-            <div id="chat-list" class="chat-list">
-                <!-- Lista de conversas salvas aparece aqui -->
+    <!-- ESTRUTURA PRINCIPAL -->
+    <div class="workspace">
+        <aside class="sidebar" id="sidebar">
+            <div class="logo-area">
+                <div class="logo-box"><i class="fa-solid fa-layer-group"></i></div>
+                <div>
+                    <h1>OmniCouncil</h1>
+                    <span id="db-badge" class="status-tag">Conectando...</span>
+                </div>
+                <button id="close-sidebar-mobile" class="btn-icon mobile-only"><i class="fa-solid fa-xmark"></i></button>
             </div>
 
-            <div class="sidebar-footer">
-                <button id="open-api-btn" class="btn-secondary full-width">⚙️ Configurar APIs</button>
+            <button id="open-room-btn" class="btn-primary full-width">
+                <i class="fa-solid fa-plus"></i> Nova Conversa
+            </button>
+
+            <div class="nav-label">HISTÓRICO DE SALAS</div>
+            <div id="rooms-list" class="rooms-list"></div>
+
+            <div class="sidebar-bottom">
+                <button id="open-config-btn" class="btn-secondary full-width">
+                    <i class="fa-solid fa-gear"></i> Chave API & Supabase
+                </button>
             </div>
         </aside>
 
-        <!-- ÁREA DO CHAT -->
-        <main class="chat-area">
-            <header class="chat-header">
-                <div>
-                    <h2 id="current-chat-title">Selecione ou crie uma conversa</h2>
-                    <span id="active-participants" class="participants-badge"></span>
-                </div>
-                <div class="auto-reply-toggle">
-                    <label title="Permite que uma IA chame a outra usando @NomeDaIA">
-                        <input type="checkbox" id="ai-to-ai-toggle" checked>
-                        Permitir conversa entre IAs
-                    </label>
-                </div>
-            </header>
-
-            <div id="messages-container" class="messages-container">
-                <div class="empty-state">Crie uma nova conversa à esquerda para começar.</div>
-            </div>
-
-            <!-- CONTROLES DE ENVIO -->
-            <footer class="chat-input-area">
-                <div class="target-selector">
-                    <span>Enviar para:</span>
-                    <div id="target-buttons" class="target-buttons">
-                        <!-- Botões dinâmicos das IAs da sala aparecem aqui -->
+        <main class="chat-stage">
+            <header class="topbar">
+                <div class="topbar-info">
+                    <button id="open-sidebar-mobile" class="btn-icon mobile-only"><i class="fa-solid fa-bars"></i></button>
+                    <div>
+                        <h2 id="active-room-title">Selecione ou crie uma sala</h2>
+                        <div id="active-room-badges" class="badges-row"></div>
                     </div>
                 </div>
-                
-                <div class="input-row">
-                    <textarea id="user-input" rows="2" placeholder="Digite sua mensagem..."></textarea>
-                    <button id="send-btn" class="btn-primary">Enviar</button>
+
+                <label class="toggle-control" title="Permite que uma IA mencione e responda outra automaticamente">
+                    <span>IAs conversam entre si</span>
+                    <input type="checkbox" id="auto-debate-toggle" checked>
+                    <span class="toggle-track"></span>
+                </label>
+            </header>
+
+            <section id="feed" class="messages-feed">
+                <div class="empty-hero">
+                    <i class="fa-solid fa-robot"></i>
+                    <h3>Suas 5 IAs em um só lugar</h3>
+                    <p>Clique em <strong>Chave API & Supabase</strong> no canto inferior esquerdo para colar sua chave do OpenRouter e comece a conversar.</p>
+                </div>
+            </section>
+
+            <footer class="input-dock">
+                <div class="recipient-bar">
+                    <span>Direcionar para:</span>
+                    <div id="recipient-pills" class="pills-group"></div>
+                </div>
+                <div class="input-box">
+                    <textarea id="msg-input" rows="1" placeholder="Digite sua mensagem..."></textarea>
+                    <button id="send-btn" class="btn-send"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
             </footer>
         </main>
