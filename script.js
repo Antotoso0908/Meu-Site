@@ -1,39 +1,37 @@
 // ==========================================
-// 1. MAPA DE MODELOS VIA OPENROUTER
-// ==========================================
-// ==========================================
-// 1. MAPA DE MODELOS (100% GRATUITOS NO OPENROUTER)
+/// ==========================================
+// 1. MAPA DE MODELOS (ALTERNATIVAS GRATUITAS)
 // ==========================================
 const AI_PROFILES = {
     ChatGPT: {
         icon: 'fa-bolt',
         color: '#10a37f',
-        freeModel: 'deepseek/deepseek-chat:free', // Usando DeepSeek V3 gratuito como equivalente rápido
-        proModel: 'deepseek/deepseek-chat:free'
+        freeModel: 'mistralai/mistral-7b-instruct:free',
+        proModel: 'mistralai/mistral-7b-instruct:free'
     },
     Claude: {
         icon: 'fa-feather',
         color: '#e07a5f',
-        freeModel: 'sophosympatheia/rogue-rose-103b-v0.2:free', // Alternativa gratuita estável para escrita criativa
-        proModel: 'sophosympatheia/rogue-rose-103b-v0.2:free'
+        freeModel: 'microsoft/phi-3-mini-128k-instruct:free',
+        proModel: 'microsoft/phi-3-mini-128k-instruct:free'
     },
     Gemini: {
         icon: 'fa-sparkles',
         color: '#38bdf8',
-        freeModel: 'google/gemma-2-9b-it:free', // Gemma 2 da Google (100% gratuito e rápido)
+        freeModel: 'google/gemma-2-9b-it:free',
         proModel: 'google/gemma-2-9b-it:free'
     },
     Grok: {
         icon: 'fa-x',
         color: '#e2e8f0',
-        freeModel: 'mistralai/mistral-7b-instruct:free', // Mistral gratuito simulando o estilo direto
-        proModel: 'mistralai/mistral-7b-instruct:free'
+        freeModel: 'huggingfaceh4/zephyr-7b-beta:free',
+        proModel: 'huggingfaceh4/zephyr-7b-beta:free'
     },
     MetaAI: {
         icon: 'fa-infinity',
         color: '#3b82f6',
-        freeModel: 'meta-llama/llama-3.1-8b-instruct:free', // Llama 3.1 da Meta (gratuito e sem barreiras de pagamento)
-        proModel: 'meta-llama/llama-3.1-8b-instruct:free'
+        freeModel: 'meta-llama/llama-3-8b-instruct:free',
+        proModel: 'meta-llama/llama-3-8b-instruct:free'
     },
     Você: {
         icon: 'fa-user',
