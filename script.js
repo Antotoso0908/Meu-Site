@@ -104,31 +104,11 @@ async function syncUp() {
     }
 }
 
-// ==========================================
-// 3. TELA DE BLOQUEIO (FORÇANDO RESET)
-// ==========================================
-const lockScreen = document.getElementById('lock-screen');
-const passInput = document.getElementById('master-pass');
-
-// Linha alterada para limpar qualquer senha travada no celular
-localStorage.removeItem('omni_pass');
-let savedPass = null;
-
-function unlock() {
-    const val = passInput.value.trim();
-    if (!val) return;
-    
-    // Salva a nova senha digitada
-    localStorage.setItem('omni_pass', val);
-    lockScreen.classList.add('hidden');
-    connectSupabase();
-}
-
-document.getElementById('unlock-btn').onclick = unlock;
-passInput.addEventListener('keypress', e => { if (e.key === 'Enter') unlock(); });
+// Inicializa a conexão logo ao carregar a página
+connectSupabase();
 
 // ==========================================
-// 4. CONTROLE DOS MODAIS
+// 3. CONTROLE DOS MODAIS
 // ==========================================
 const sidebar = document.getElementById('sidebar');
 document.getElementById('open-sidebar-mobile').onclick = () => sidebar.classList.add('open');
@@ -185,7 +165,7 @@ document.getElementById('create-room-btn').onclick = async () => {
 };
 
 // ==========================================
-// 5. RENDERIZAÇÃO DAS SALAS E MENSAGENS
+// 4. RENDERIZAÇÃO DAS SALAS E MENSAGENS
 // ==========================================
 function renderRooms() {
     const list = document.getElementById('rooms-list');
@@ -284,7 +264,7 @@ function renderFeed() {
 }
 
 // ==========================================
-// 6. ENVIO E COMUNICAÇÃO VIA OPENROUTER
+// 5. ENVIO E COMUNICAÇÃO VIA OPENROUTER
 // ==========================================
 const msgInput = document.getElementById('msg-input');
 msgInput.addEventListener('input', function() {
