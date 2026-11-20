@@ -38,9 +38,6 @@ const AI_PROFILES = {
     }
 };
 
-// ==========================================
-// 2. ESTADO GLOBAL E SUPABASE
-// ==========================================
 let rooms = JSON.parse(localStorage.getItem('omni_rooms')) || [];
 let config = JSON.parse(localStorage.getItem('omni_config')) || {
     openrouterKey: '',
@@ -55,8 +52,16 @@ let currentRecipient = 'Todos';
 let autoTurns = 0;
 const MAX_TURNS = 5;
 
+// Aguarda o HTML carregar completamente antes de rodar os scripts
+document.addEventListener('DOMContentLoaded', () => {
+    connectSupabase();
+    initUIEvents();
+    renderRooms();
+});
+
 function connectSupabase() {
     const badge = document.getElementById('db-badge');
+    if (!badge) return;
     if (config.supaUrl && config.supaKey && window.supabase) {
         try {
             supabaseClient = window.supabase.createClient(config.supaUrl, config.supaKey);
@@ -104,71 +109,82 @@ async function syncUp() {
     }
 }
 
-// Inicializa a conexão logo ao carregar a página
-connectSupabase();
+function initUIEvents() {
+    const sidebar = document.getElementById('sidebar');
+    const btnOpenMobile = document.getElementById('open-sidebar-mobile');
+    const btnCloseMobile = document.getElementById('close-sidebar-mobile');
 
-// ==========================================
-// 3. CONTROLE DOS MODAIS
-// ==========================================
-const sidebar = document.getElementById('sidebar');
-document.getElementById('open-sidebar-mobile').onclick = () => sidebar.classList.add('open');
-document.getElementById('close-sidebar-mobile').onclick = () => sidebar.classList.remove('open');
+    if (btnOpenMobile) btnOpenMobile.onclick = () => sidebar.classList.add('open');
+    if (btnCloseMobile) btnCloseMobile.onclick = () => sidebar.classList.remove('open');
 
-const configModal = document.getElementById('config-modal');
-document.getElementById('open-config-btn').onclick = () => {
-    document.getElementById('openrouter-key').value = config.openrouterKey || '';
-    document.getElementById('model-tier').value = config.tier || 'free';
-    document.getElementById('supa-url').value = config.supaUrl || '';
-    document.getElementById('supa-key').value = config.supaKey || '';
-    configModal.classList.remove('hidden');
-};
-document.getElementById('close-config-btn').onclick = () => configModal.classList.add('hidden');
+    const configModal = document.getElementById('config-modal');
+    document.getElementById('open-config-btn').onclick = () => {
+        document.getElementById('openrouter-key').value = config.openrouterKey || '';
+        document.getElementById('model-tier').value = config.tier || 'free';
+        document.getElementById('supa-url').value = config.supaUrl || '';
+        document.getElementById('supa-key').value = config.supaKey || '';
+        configModal.classList.remove('hidden');
+    };
+    document.getElementById('close-config-btn').onclick = () => configModal.classList.add('hidden');
 
-document.getElementById('save-config-btn').onclick = async () => {
-    config.openrouterKey = document.getElementById('openrouter-key').value.trim();
-    config.tier = document.getElementById('model-tier').value;
-    config.supaUrl = document.getElementById('supa-url').value.trim();
-    config.supaKey = document.getElementById('supa-key').value.trim();
+    document.getElementById('save-config-btn').onclick = async () => {
+        config.openrouterKey = document.getElementById('openrouter-key').value.trim();
+        config.tier = document.getElementById('model-tier').value;
+        config.supaUrl = document.getElementById('supa-url').value.trim();
+        config.supaKey = document.getElementById('supa-key').value.trim();
 
-    connectSupabase();
-    await syncUp();
-    configModal.classList.add('hidden');
-};
-
-const roomModal = document.getElementById('room-modal');
-document.getElementById('open-room-btn').onclick = () => roomModal.classList.remove('hidden');
-document.getElementById('close-room-btn').onclick = () => roomModal.classList.add('hidden');
-
-document.getElementById('create-room-btn').onclick = async () => {
-    const name = document.getElementById('room-name').value.trim() || `Sala #${rooms.length + 1}`;
-    const selected = Array.from(document.querySelectorAll('#room-modal input[type="checkbox"]:checked')).map(c => c.value);
-
-    if (selected.length === 0) {
-        alert('Escolha pelo menos uma IA!');
-        return;
-    }
-
-    const newRoom = {
-        id: Date.now().toString(),
-        name,
-        members: selected,
-        messages: []
+        connectSupabase();
+        await syncUp();
+        configModal.classList.add('hidden');
     };
 
-    rooms.unshift(newRoom);
-    await syncUp();
-    roomModal.classList.add('hidden');
-    document.getElementById('room-name').value = '';
-    sidebar.classList.remove('open');
-    openRoom(newRoom.id);
-    renderRooms();
-};
+    const roomModal = document.getElementById('room-modal');
+    document.getElementById('open-room-btn').onclick = () => roomModal.classList.remove('hidden');
+    document.getElementById('close-room-btn').onclick = () => roomModal.classList.add('hidden');
 
-// ==========================================
-// 4. RENDERIZAÇÃO DAS SALAS E MENSAGENS
-// ==========================================
+    document.getElementById('create-room-btn').onclick = async () => {
+        const name = document.getElementById('room-name').value.trim() || `Sala #${rooms.length + 1}`;
+        const selected = Array.from(document.querySelectorAll('#room-modal input[type="checkbox"]:checked')).map(c => c.value);
+
+        if (selected.length === 0) {
+            alert('Escolha pelo menos uma IA!');
+            return;
+        }
+
+        const newRoom = {
+            id: Date.now().toString(),
+            name,
+            members: selected,
+            messages: []
+        };
+
+        rooms.unshift(newRoom);
+        await syncUp();
+        roomModal.classList.add('hidden');
+        document.getElementById('room-name').value = '';
+        sidebar.classList.remove('open');
+        openRoom(newRoom.id);
+        renderRooms();
+    };
+
+    const msgInput = document.getElementById('msg-input');
+    msgInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
+    });
+
+    document.getElementById('send-btn').onclick = sendMessage;
+    msgInput.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendMessage();
+        }
+    });
+}
+
 function renderRooms() {
     const list = document.getElementById('rooms-list');
+    if (!list) return;
     list.innerHTML = '';
     rooms.forEach(r => {
         const item = document.createElement('div');
@@ -179,7 +195,8 @@ function renderRooms() {
         `;
         item.onclick = () => {
             openRoom(r.id);
-            sidebar.classList.remove('open');
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar) sidebar.classList.remove('open');
         };
         list.appendChild(item);
     });
@@ -263,24 +280,8 @@ function renderFeed() {
     feed.scrollTop = feed.scrollHeight;
 }
 
-// ==========================================
-// 5. ENVIO E COMUNICAÇÃO VIA OPENROUTER
-// ==========================================
-const msgInput = document.getElementById('msg-input');
-msgInput.addEventListener('input', function() {
-    this.style.height = 'auto';
-    this.style.height = this.scrollHeight + 'px';
-});
-
-document.getElementById('send-btn').onclick = sendMessage;
-msgInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    }
-});
-
 async function sendMessage() {
+    const msgInput = document.getElementById('msg-input');
     const text = msgInput.value.trim();
     if (!text || !activeRoomId) return;
 
@@ -388,5 +389,3 @@ REGRA OBRIGATÓRIA E PERMANENTE:
         renderFeed();
     }
 }
-
-renderRooms();
