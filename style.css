@@ -16,7 +16,14 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-body { background: var(--bg-main); color: var(--text-1); height: 100vh; overflow: hidden; }
+
+/* Usa altura dinâmica para descontar os botões de navegação nativos do celular */
+html, body { 
+    background: var(--bg-main); 
+    color: var(--text-1); 
+    height: 100dvh; 
+    overflow: hidden; 
+}
 
 .ambient-light { position: fixed; width: 420px; height: 420px; border-radius: 50%; filter: blur(140px); opacity: 0.16; pointer-events: none; }
 .light-purple { top: -80px; left: -80px; background: #8b5cf6; }
@@ -59,7 +66,7 @@ button { cursor: pointer; border: none; font-weight: 600; transition: 0.2s; }
 .btn-icon:hover { background: rgba(255,255,255,0.08); color: white; }
 
 /* Layout Principal */
-.workspace { display: flex; height: 100vh; position: relative; z-index: 1; }
+.workspace { display: flex; height: 100dvh; position: relative; z-index: 1; }
 .sidebar { width: 270px; background: var(--bg-surface); backdrop-filter: blur(18px); border-right: 1px solid var(--border); padding: 18px 14px; display: flex; flex-direction: column; }
 .logo-area { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; }
 .logo-box { width: 38px; height: 38px; border-radius: 10px; background: var(--gradient); display: flex; align-items: center; justify-content: center; }
@@ -113,14 +120,11 @@ button { cursor: pointer; border: none; font-weight: 600; transition: 0.2s; }
 .msg-text pre { background: #06080d; padding: 10px; border-radius: 8px; overflow-x: auto; margin: 8px 0; }
 .msg-text code { font-family: 'JetBrains Mono', monospace; font-size: 0.82rem; }
 
-/* Dock de Input */
-/* Dock de Input (Otimizado para celulares e barra de navegação) */
+/* Dock de Input - Elevado para cima da barra de navegação do celular */
 .input-dock { 
-    padding: 14px 24px calc(20px + env(safe-area-inset-bottom)); 
+    padding: 12px 20px calc(16px + env(safe-area-inset-bottom, 20px)); 
     background: var(--bg-main); 
     border-top: 1px solid var(--border); 
-    position: relative;
-    z-index: 10;
 }
 
 .recipient-bar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 0.78rem; color: var(--text-2); flex-wrap: wrap; }
