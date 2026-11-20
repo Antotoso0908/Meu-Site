@@ -1,36 +1,39 @@
 // ==========================================
 // 1. MAPA DE MODELOS VIA OPENROUTER
 // ==========================================
+// ==========================================
+// 1. MAPA DE MODELOS (100% GRATUITOS NO OPENROUTER)
+// ==========================================
 const AI_PROFILES = {
     ChatGPT: {
         icon: 'fa-bolt',
         color: '#10a37f',
-        freeModel: 'openrouter/free',
-        proModel: 'openai/gpt-4o-mini'
+        freeModel: 'deepseek/deepseek-chat:free', // Usando DeepSeek V3 gratuito como equivalente rápido
+        proModel: 'deepseek/deepseek-chat:free'
     },
     Claude: {
         icon: 'fa-feather',
         color: '#e07a5f',
-        freeModel: 'openrouter/free',
-        proModel: 'anthropic/claude-3.5-sonnet'
+        freeModel: 'sophosympatheia/rogue-rose-103b-v0.2:free', // Alternativa gratuita estável para escrita criativa
+        proModel: 'sophosympatheia/rogue-rose-103b-v0.2:free'
     },
     Gemini: {
         icon: 'fa-sparkles',
         color: '#38bdf8',
-        freeModel: 'google/gemma-4-26b-a4b-it:free',
-        proModel: 'google/gemini-2.5-flash'
+        freeModel: 'google/gemma-2-9b-it:free', // Gemma 2 da Google (100% gratuito e rápido)
+        proModel: 'google/gemma-2-9b-it:free'
     },
     Grok: {
         icon: 'fa-x',
         color: '#e2e8f0',
-        freeModel: 'openrouter/free',
-        proModel: 'x-ai/grok-2-1212'
+        freeModel: 'mistralai/mistral-7b-instruct:free', // Mistral gratuito simulando o estilo direto
+        proModel: 'mistralai/mistral-7b-instruct:free'
     },
     MetaAI: {
         icon: 'fa-infinity',
         color: '#3b82f6',
-        freeModel: 'meta-llama/llama-3.3-70b-instruct:free',
-        proModel: 'meta-llama/llama-3.3-70b-instruct'
+        freeModel: 'meta-llama/llama-3.1-8b-instruct:free', // Llama 3.1 da Meta (gratuito e sem barreiras de pagamento)
+        proModel: 'meta-llama/llama-3.1-8b-instruct:free'
     },
     Você: {
         icon: 'fa-user',
