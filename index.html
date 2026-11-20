@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Council - Meu Hub Privado</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- TELA DE BLOQUEIO (Para manter o site público privado só para você) -->
+    <div id="lock-screen" class="overlay">
+        <div class="modal-box">
+            <h2>🔒 Acesso Restrito</h2>
+            <p id="lock-msg">Digite sua senha de acesso:</p>
+            <input type="password" id="master-password" placeholder="Sua senha...">
+            <button id="unlock-btn" class="btn-primary">Entrar</button>
+        </div>
+    </div>
+
+    <!-- MODAL DE CONFIGURAÇÃO DE CHAVES DE API -->
+    <div id="api-modal" class="overlay hidden">
+        <div class="modal-box">
+            <h2>🔑 Configurar Chaves de API</h2>
+            <p class="small-text">Suas chaves ficam salvas apenas no navegador deste dispositivo.</p>
+            
+            <label>OpenAI (ChatGPT)</label>
+            <input type="password" id="key-openai" placeholder="sk-...">
+            
+            <label>Anthropic (Claude)</label>
+            <input type="password" id="key-anthropic" placeholder="sk-ant-...">
+            
+            <label>xAI (Grok)</label>
+            <input type="password" id="key-grok" placeholder="xai-...">
+            
+            <label>DeepSeek</label>
+            <input type="password" id="key-deepseek" placeholder="sk-...">
+            
+            <label>Groq (Para rodar Meta Llama 3 grátis/rápido)</label>
+            <input type="password" id="key-meta" placeholder="gsk_...">
+
+            <div class="modal-actions">
+                <button id="save-keys-btn" class="btn-primary">Salvar Chaves</button>
+                <button id="close-api-btn" class="btn-secondary">Fechar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE NOVA CONVERSA -->
+    <div id="new-chat-modal" class="overlay hidden">
+        <div class="modal-box">
+            <h2>💬 Nova Conversa em Grupo</h2>
+            <label>Nome da Sala / Assunto:</label>
+            <input type="text" id="chat-title-input" placeholder="Ex: Debate sobre Programação...">
+            
+            <p>Selecione quais IAs vão participar desta sala:</p>
+            <div class="checkbox-group">
+                <label><input type="checkbox" value="ChatGPT" checked> ChatGPT (OpenAI)</label>
+                <label><input type="checkbox" value="Claude" checked> Claude (Anthropic)</label>
+                <label><input type="checkbox" value="Grok"> Grok (xAI)</label>
+                <label><input type="checkbox" value="DeepSeek"> DeepSeek</label>
+                <label><input type="checkbox" value="MetaAI"> Meta AI (Llama 3)</label>
+            </div>
+
+            <div class="modal-actions">
+                <button id="create-chat-confirm" class="btn-primary">Criar Sala</button>
+                <button id="close-new-chat-btn" class="btn-secondary">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INTERFACE PRINCIPAL -->
+    <div class="app-container">
+        <!-- BARRA LATERAL -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h3>🤖 AI Council</h3>
+                <button id="open-new-chat-btn" class="btn-primary full-width">+ Nova Conversa</button>
+            </div>
+            
+            <div id="chat-list" class="chat-list">
+                <!-- Lista de conversas salvas aparece aqui -->
+            </div>
+
+            <div class="sidebar-footer">
+                <button id="open-api-btn" class="btn-secondary full-width">⚙️ Configurar APIs</button>
+            </div>
+        </aside>
+
+        <!-- ÁREA DO CHAT -->
+        <main class="chat-area">
+            <header class="chat-header">
+                <div>
+                    <h2 id="current-chat-title">Selecione ou crie uma conversa</h2>
+                    <span id="active-participants" class="participants-badge"></span>
+                </div>
+                <div class="auto-reply-toggle">
+                    <label title="Permite que uma IA chame a outra usando @NomeDaIA">
+                        <input type="checkbox" id="ai-to-ai-toggle" checked>
+                        Permitir conversa entre IAs
+                    </label>
+                </div>
+            </header>
+
+            <div id="messages-container" class="messages-container">
+                <div class="empty-state">Crie uma nova conversa à esquerda para começar.</div>
+            </div>
+
+            <!-- CONTROLES DE ENVIO -->
+            <footer class="chat-input-area">
+                <div class="target-selector">
+                    <span>Enviar para:</span>
+                    <div id="target-buttons" class="target-buttons">
+                        <!-- Botões dinâmicos das IAs da sala aparecem aqui -->
+                    </div>
+                </div>
+                
+                <div class="input-row">
+                    <textarea id="user-input" rows="2" placeholder="Digite sua mensagem..."></textarea>
+                    <button id="send-btn" class="btn-primary">Enviar</button>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
